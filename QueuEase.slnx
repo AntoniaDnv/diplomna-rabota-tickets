@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/QueuEase.Data/QueuEase.Data.csproj" />
+    <Project Path="src/QueuEase.Services/QueuEase.Services.csproj" />
+    <Project Path="src/QueuEase.Web/QueuEase.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/QueuEase.Tests/QueuEase.Tests.csproj" />
+  </Folder>
+</Solution>
