@@ -11,6 +11,7 @@ public static class DataConstants
     public const int DisplayNumberMaxLength = 10;
 
     public const int TokenMaxLength = 64;
+    public const int TokenLength = 32;
     public const int JoinCodeLength = 8;
 
     public const int TicketExpiryHoursMin = 1;

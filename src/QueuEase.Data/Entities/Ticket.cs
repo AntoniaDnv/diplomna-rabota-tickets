@@ -29,10 +29,14 @@ public class Ticket
     public int? CounterId { get; set; }
     public Counter? Counter { get; set; }
 
+    // The employee serving the ticket now. Who issued a staff ticket is recorded in TicketEvent.
     public string? EmployeeId { get; set; }
     public ApplicationUser? Employee { get; set; }
 
-    // All times are UTC. QueuedAt decides the order in the queue.
+    // All times are UTC.
+    // IssuedAt never changes; expiry (TicketExpiryHours) is counted from it.
+    public DateTime IssuedAt { get; set; }
+    // QueuedAt decides the order in the queue; a "to the end of the queue" redirect resets it.
     public DateTime QueuedAt { get; set; }
     public DateTime? CalledAt { get; set; }
     public DateTime? ServiceStartedAt { get; set; }
