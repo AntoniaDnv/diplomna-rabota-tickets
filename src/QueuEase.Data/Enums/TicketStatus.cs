@@ -1,4 +1,4 @@
-namespace QueuEase.Data.Enums;
+   namespace QueuEase.Data.Enums;
 
 // Called and InService are used in a filtered database index; do not change their values.
 public enum TicketStatus

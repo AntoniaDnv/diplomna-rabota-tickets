@@ -1,0 +1,58 @@
+# Starts the whole system with one command:  docker compose up --build
+#
+#   browser --> frontend (nginx + React) --/api--> backend (ASP.NET Core) --> db (SQL Server)
+#
+# The three containers share a private network that Docker Compose creates.
+# Inside it each container is reachable by its service name: db, backend, frontend.
+# The password comes from the .env file next to this file (.env is not in Git; see .env.example).
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      # Starting this container means accepting Microsoft's SQL Server licence terms.
+      ACCEPT_EULA: "Y"
+      # Express is the free edition that may also be used in production (up to 10 GB per database).
+      MSSQL_PID: "Express"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?Create a .env file from .env.example}
+    volumes:
+      # The data is kept in a named volume, so it survives "docker compose down".
+      - db-data:/var/opt/mssql
+    ports:
+      # Only for tools on this computer (SSMS: server "localhost,14330"). Not needed by the backend.
+      - "127.0.0.1:14330:1433"
+    healthcheck:
+      # SQL Server needs 10-30 seconds to start. The backend waits until this command succeeds.
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q \"SELECT 1\" -b -o /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  backend:
+    build:
+      context: .
+      dockerfile: src/QueuEase.Web/Dockerfile
+    environment:
+      # Two underscores mean ":" in ASP.NET Core, so this is ConnectionStrings:DefaultConnection.
+      # "Server=db" is the service above, not localhost.
+      ConnectionStrings__DefaultConnection: "Server=db;Database=QueuEase;User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True"
+      Seeding__DemoData: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      # Only for testing the API directly: http://localhost:5104/api/health
+      - "127.0.0.1:5104:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+    depends_on:
+      - backend
+    ports:
+      # The address of the application: http://localhost:3000
+      - "3000:80"
+
+volumes:
+  db-data:
