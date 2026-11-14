@@ -492,6 +492,3 @@ $RECYCLE.BIN/
 # Local planning notes (not part of the project)
 docs/plans/
 docs/specs/
-
-# React build output
-frontend/dist/

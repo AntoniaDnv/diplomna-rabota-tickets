@@ -7,6 +7,6 @@ public class SmokeTests
     [Fact]
     public void SolutionBuilds()
     {
-        Assert.NotNull(typeof(HealthController).Assembly);
+        Assert.NotNull(typeof(HomeController).Assembly);
     }
 }
